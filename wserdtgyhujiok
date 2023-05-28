@@ -1,0 +1,77 @@
+#include <locale.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int exibirMenu() {
+  int opcion;
+  do {
+    printf("========== MENU ==========\n");
+    printf("1. Mostrar informações por município\n");
+    printf("2. Mostrar informações por estado\n");
+    printf("3. Mostrar informações por participação e participação acumulada\n");
+    printf("4. Sair\n");
+    printf("==========================\n");
+    printf("Escolha uma opção: ");
+    scanf("%d", &opcion);
+    if (opcion < 1 || opcion > 4) {
+      printf("Esta não é uma opção válida!\n");
+    }
+  } while (opcion < 1 || opcion > 4);
+  return opcion;
+}
+
+int main() {
+  FILE *arquivo;
+  FILE *saida;
+
+  int opcion;
+  char state[101][30];
+  float nuts[101][6];
+
+  arquivo = fopen("src/regret.csv", "r");
+
+  if (arquivo == NULL) {
+    perror("Erro 404! Arquivo não encontrado");
+    return 1;
+  }
+
+  char sofia[999];
+  fgets(sofia, sizeof(sofia), arquivo);
+
+  char *token;
+  int i = 1;
+  while (fgets(sofia, sizeof(sofia), arquivo) != NULL) {
+    token = strtok(sofia, ",");
+    strcpy(state[i], token);
+    token = strtok(NULL, ",");
+    nuts[i][1] = strtof(token, NULL);
+    token = strtok(NULL, ",");
+    nuts[i][2] = strtof(token, NULL);
+    token = strtok(NULL, ",");
+    nuts[i][3] = strtof(token, NULL);
+    token = strtok(NULL, ",");
+    token = strtok(NULL, ",");
+    nuts[i][4] = strtof(token, NULL);
+    token = strtok(NULL, ",");
+    token = strtok(NULL, ",");
+    nuts[i][5] = strtof(token, NULL);
+    i++;
+  }
+
+  fclose(arquivo);
+
+  saida = fopen("saida.csv", "w");
+  if (saida == NULL) {
+    perror("Erro ao abrir o arquivo de saída");
+    return 1;
+  }
+
+  for (i = 0; i < 5; i++) {
+    printf("%f\n", nuts[1][i]);
+  }
+
+  fclose(saida);
+
+  return 0;
+}
